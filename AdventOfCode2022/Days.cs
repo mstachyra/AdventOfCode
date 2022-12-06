@@ -11,6 +11,46 @@ namespace AdventOfCode2022
 {
     public static class Days
     {
+        public static void RunDay6Part2()
+        {
+            var line = File.ReadAllText("./Data/Day6.txt");
+
+            // PART2
+            //var line = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg";
+
+            var s = new char[14];
+
+            for (int i = 13; i < line.Length; i++)
+            {
+                line.CopyTo(i - 13, s, 0, 14);
+
+                if (s.Length == s.Distinct().Count())
+                {
+                    Console.WriteLine(i + 1);
+                    return;
+                }
+            }
+        }
+
+        public static void RunDay6()
+        {
+            var line = File.ReadAllText("./Data/Day6.txt");
+            //var line = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw";
+
+            var s = new char[4];
+
+            for (int i = 3; i < line.Length; i++)
+            {
+                line.CopyTo(i - 3, s, 0, 4);
+
+                if (s.Length == s.Distinct().Count())
+                {
+                    Console.WriteLine(i+1);
+                    return;
+                }
+            }
+        }
+
         public static void RunDay5()
         {
             var lines = File.ReadAllLines("./Data/Day5.txt");

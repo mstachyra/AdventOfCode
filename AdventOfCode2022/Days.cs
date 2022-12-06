@@ -2,13 +2,138 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AdventOfCode2022
 {
     public static class Days
     {
+        public static void RunDay5()
+        {
+            var lines = File.ReadAllLines("./Data/Day5.txt");
+
+            var helpLine = string.Empty;
+            var stacksCount = 0;
+            var stacksLines = new List<string>();
+
+            var stacks = new List<Stack<char>>();
+
+            var packAcumulator = new List<char>();
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("move"))
+                {
+                    var numbers = Regex.Matches(lines[i], "(\\d+)");
+                    if (numbers.Count > 3)
+                    {
+                        throw new Exception("Too much");
+                    }
+
+                    packAcumulator.Clear();
+                    var howMuch = int.Parse(numbers[0].ValueSpan);
+
+                    for (int s = 0; s < howMuch; s++)
+                    {
+                        //stacks[int.Parse(numbers[2].ValueSpan) - 1].Push(stacks[int.Parse(numbers[1].ValueSpan) - 1].Pop());
+
+                        // PART 2
+                        // stay in the same order
+                        packAcumulator.Add(stacks[int.Parse(numbers[1].ValueSpan) - 1].Pop());
+                    }
+
+                    packAcumulator.Reverse();
+                    foreach (var item in packAcumulator)
+                    {
+                        stacks[int.Parse(numbers[2].ValueSpan) - 1].Push(item);
+                    }
+                }
+                else if (string.IsNullOrWhiteSpace(lines[i]))
+                {
+                    // Build stacks
+                    stacksCount = stacksLines[0].Length / 4 + 1;
+
+                    for (int s = 0; s < stacksCount; s++)
+                    {
+                        stacks.Add(new Stack<char>());
+                    }
+
+                    for (int j = stacksLines.Count - 2; j >= 0; j--)
+                    {
+                        for (int k = 0; k < stacksCount; k++)
+                        {
+                            helpLine = stacksLines[j].Substring(k * 4 + 1, 1);
+                            if (!string.IsNullOrWhiteSpace(helpLine))
+                            {
+                                stacks[k].Push(helpLine[0]);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Add to stacks line
+                    stacksLines.Add(lines[i]);
+                }
+            }
+
+            foreach (var item in stacks)
+            {
+                Console.Write(item.Peek());
+            }
+            Console.WriteLine();
+        }
+
+        public static void RunDay4()
+        {
+            var lines = File.ReadAllLines("./Data/Day4.txt");
+            var listConverted = new List<(int a1, int a2, int b1, int b2)>();
+
+            var counter = 0;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //2-4,6-8
+                (int a1, int a2, int b1, int b2) item = new(
+                                    int.Parse(lines[i].Substring(0, lines[i].IndexOf("-"))),
+                                    int.Parse(lines[i].Substring(lines[i].IndexOf("-") + 1, lines[i].IndexOf(",") - lines[i].IndexOf("-") - 1)),
+                                    int.Parse(lines[i].Substring(lines[i].IndexOf(",") + 1, lines[i].LastIndexOf("-") - lines[i].IndexOf(",") - 1)),
+                                    int.Parse(lines[i].Substring(lines[i].LastIndexOf("-") + 1))
+                                    );
+                listConverted.Add(item);
+
+                if (item.a1 >= item.b1 && item.a2 <= item.b2)
+                {
+                    counter++;
+                    continue;
+                }
+                else if (item.a1 <= item.b1 && item.a2 >= item.b2)
+                {
+                    counter++;
+                    continue;
+                }
+
+                // PART2
+
+                if (item.a1 >= item.b1 && item.a1 <= item.b2)
+                {
+                    counter++;
+                    continue;
+                }
+
+                if (item.a2 >= item.b1 && item.a2 <= item.b2)
+                {
+                    counter++;
+                    continue;
+                }
+            }
+
+            Console.WriteLine(counter);
+        }
+
         public static void RunDay3()
         {
             var lines = File.ReadAllLines("./Data/Day3.txt");
